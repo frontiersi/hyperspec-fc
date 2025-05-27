@@ -1,6 +1,11 @@
 # netcdf files
 *.nc
 data/
+*.tif
+*.geojson
+*.qgz
+*.xml
+*.vrt
 
 # MAC
 .DS_Store
