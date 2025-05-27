@@ -24,6 +24,7 @@ import numpy as np
 import math
 import pandas as pd
 import xarray as xr
+import rioxarray as rxr
 import rasterio as rio
 import s3fs
 from fsspec.implementations.http import HTTPFile
@@ -43,9 +44,9 @@ def emit_xarray(filepath, ortho=True, qmask=None, unpacked_bmask=None):
 
         """
     # Read in Data as Xarray Datasets
-    ds = xr.open_dataset(filepath,engine = 'h5netcdf')
-    loc = xr.open_dataset(filepath, engine = 'h5netcdf', group='location')
-    wvl = xr.open_dataset(filepath, engine = 'h5netcdf', group='sensor_band_parameters') 
+    ds = xr.open_dataset(filepath) #,engine = 'h5netcdf')
+    loc = xr.open_dataset(filepath, group='location') #,engine = 'h5netcdf')
+    wvl = xr.open_dataset(filepath, group='sensor_band_parameters')  #,engine = 'h5netcdf')
     
     # Building Flat Dataset from Components
     data_vars = {**ds.variables} 
@@ -230,9 +231,9 @@ def quality_mask(filepath, quality_bands):
     qmask: a numpy array that can be used with the emit_xarray function to apply a quality mask.
     """
     # Open Dataset
-    mask_ds = xr.open_dataset(filepath,engine = 'h5netcdf')
+    mask_ds = xr.open_dataset(filepath)#,engine = 'h5netcdf')
     # Open Sensor band Group
-    mask_parameters_ds = xr.open_dataset(filepath,engine = 'h5netcdf', group='sensor_band_parameters')
+    mask_parameters_ds = xr.open_dataset(filepath, group='sensor_band_parameters') #,engine = 'h5netcdf'
     # Print Flags used
     flags_used = mask_parameters_ds['mask_bands'].data[quality_bands]
     print(f'Flags used: {flags_used}')
@@ -257,7 +258,7 @@ def band_mask(filepath):
     band_mask: a numpy array that can be used with the emit_xarray function to apply a band mask.
     """
     # Open Dataset
-    mask_ds = xr.open_dataset(filepath,engine = 'h5netcdf')
+    mask_ds = xr.open_dataset(filepath) #,engine = 'h5netcdf')
     # Open band_mask and convert to uint8
     bmask = mask_ds.band_mask.data.astype('uint8')
     # Print Flags used
